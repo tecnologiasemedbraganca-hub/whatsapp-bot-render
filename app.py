@@ -36,18 +36,22 @@ def enviar_mensagem_whatsapp(numero, texto):
 
     response = requests.post(url, headers=headers, json=payload)
     print("Resposta envio:", response.text)
+
+
+# 🔹 Rota de teste manual de envio
 @app.route("/teste-envio", methods=["GET"])
 def teste_envio():
     enviar_mensagem_whatsapp("5591984319683", "Teste manual OK 🚀")
     return "ok"
 
-# 🔹 Rota raiz (teste)
+
+# 🔹 Rota raiz
 @app.route("/", methods=["GET"])
 def home():
     return "Bot WhatsApp rodando com banco 🚀"
 
 
-
+# 🔹 Webhook WhatsApp
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
 
@@ -79,7 +83,6 @@ def webhook():
             msg = messages[0]
             telefone = msg.get("from")
 
-            texto = ""
             if msg.get("text"):
                 texto = msg["text"].get("body", "")
             else:
@@ -88,45 +91,33 @@ def webhook():
             print("Telefone:", telefone)
             print("Texto:", texto)
 
+            # 🔹 Salvar no banco
+            conn = get_db()
+            cur = conn.cursor()
+
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS mensagens (
+                    id SERIAL PRIMARY KEY,
+                    telefone TEXT,
+                    mensagem TEXT,
+                    data TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+
+            cur.execute(
+                "INSERT INTO mensagens (telefone, mensagem) VALUES (%s, %s)",
+                (telefone, texto)
+            )
+
+            conn.commit()
+            cur.close()
+            conn.close()
+
+            # 🔹 Responder no WhatsApp
             enviar_mensagem_whatsapp(
                 telefone,
                 "Olá! Recebi sua mensagem com sucesso ✅"
             )
-
-        except Exception as e:
-            print("Erro ao processar webhook:", e)
-
-        return jsonify({"status": "ok"}), 200
-
-
-
-                # 🔹 Salvar no banco
-                conn = get_db()
-                cur = conn.cursor()
-
-                cur.execute("""
-                    CREATE TABLE IF NOT EXISTS mensagens (
-                        id SERIAL PRIMARY KEY,
-                        telefone TEXT,
-                        mensagem TEXT,
-                        data TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                    )
-                """)
-
-                cur.execute(
-                    "INSERT INTO mensagens (telefone, mensagem) VALUES (%s, %s)",
-                    (telefone, texto)
-                )
-
-                conn.commit()
-                cur.close()
-                conn.close()
-
-                # 🔹 Responder no WhatsApp
-                enviar_mensagem_whatsapp(
-                    telefone,
-                    "Mensagem recebida com sucesso ✅"
-                )
 
         except Exception as e:
             print("Erro ao processar webhook:", e)
