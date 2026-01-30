@@ -5,7 +5,8 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
-VERIFY_TOKEN = "bot_whatsapp_123"
+VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN")
+
 
 def get_db():
     return psycopg2.connect(DATABASE_URL)
