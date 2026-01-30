@@ -42,6 +42,10 @@ def enviar_mensagem_whatsapp(numero, texto):
 @app.route("/", methods=["GET"])
 def home():
     return "Bot WhatsApp rodando com banco 🚀"
+@app.route("/teste-envio", methods=["GET"])
+def teste_envio():
+    enviar_mensagem_whatsapp("SEU_NUMERO_COM_DDI", "Teste manual OK 🚀")
+    return "ok"
 
 
 # 🔹 WEBHOOK (GET + POST)
