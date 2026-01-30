@@ -48,11 +48,10 @@ def home():
 
 
 
-# 🔹 WEBHOOK (GET + POST)
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
 
-    # ✅ Verificação do webhook (META)
+    # 🔹 Verificação do webhook (META)
     if request.method == "GET":
         mode = request.args.get("hub.mode")
         token = request.args.get("hub.verify_token")
@@ -63,41 +62,42 @@ def webhook():
         else:
             return "Token inválido", 403
 
-    # ✅ Recebimento de mensagens
+    # 🔹 Recebimento de mensagens
     if request.method == "POST":
         data = request.get_json()
         print("Webhook recebido:", data)
 
         try:
-        entry = data["entry"][0]
-        changes = entry["changes"][0]
-        value = changes["value"]
+            entry = data["entry"][0]
+            changes = entry["changes"][0]
+            value = changes["value"]
 
-        messages = value.get("messages")
-        if not messages:
-            return jsonify({"status": "no message"}), 200
+            messages = value.get("messages")
+            if not messages:
+                return jsonify({"status": "no message"}), 200
 
-        msg = messages[0]
-        telefone = msg.get("from")
+            msg = messages[0]
+            telefone = msg.get("from")
 
-        texto = ""
-        if msg.get("text"):
-            texto = msg["text"].get("body", "")
-        else:
-            texto = f"Mensagem do tipo {msg.get('type')}"
+            texto = ""
+            if msg.get("text"):
+                texto = msg["text"].get("body", "")
+            else:
+                texto = f"Mensagem do tipo {msg.get('type')}"
 
-        print("Telefone:", telefone)
-        print("Texto:", texto)
+            print("Telefone:", telefone)
+            print("Texto:", texto)
 
-        enviar_mensagem_whatsapp(
-            telefone,
-            "Olá! Recebi sua mensagem com sucesso ✅"
-        )
+            enviar_mensagem_whatsapp(
+                telefone,
+                "Olá! Recebi sua mensagem com sucesso ✅"
+            )
 
-    except Exception as e:
-        print("Erro ao processar webhook:", e)
+        except Exception as e:
+            print("Erro ao processar webhook:", e)
 
-    return jsonify({"status": "ok"}), 200
+        return jsonify({"status": "ok"}), 200
+
 
 
                 # 🔹 Salvar no banco
