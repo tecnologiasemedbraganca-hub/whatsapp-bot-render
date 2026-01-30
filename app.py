@@ -68,7 +68,7 @@ def webhook():
         data = request.get_json()
         print("Webhook recebido:", data)
 
-    try:
+        try:
         entry = data["entry"][0]
         changes = entry["changes"][0]
         value = changes["value"]
