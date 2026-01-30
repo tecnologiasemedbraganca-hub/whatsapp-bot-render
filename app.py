@@ -65,8 +65,8 @@ def webhook():
 
     # ✅ Recebimento de mensagens
     if request.method == "POST":
-    data = request.get_json()
-    print("Webhook recebido:", data)
+        data = request.get_json()
+        print("Webhook recebido:", data)
 
     try:
         entry = data["entry"][0]
