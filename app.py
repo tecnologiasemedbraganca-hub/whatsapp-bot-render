@@ -5,6 +5,9 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+# ==============================
+# 🔹 Variáveis ambiente
+# ==============================
 DATABASE_URL = os.environ.get("DATABASE_URL")
 VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN")
 ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN")
@@ -22,6 +25,7 @@ def get_db():
 # 🔹 Criar tabelas
 # ==============================
 def criar_tabelas():
+
     conn = get_db()
     cur = conn.cursor()
 
@@ -57,7 +61,7 @@ def criar_tabelas():
         )
     """)
 
-    # MENSAGEM NOVA
+    # MENSAGEM
     cur.execute("""
         CREATE TABLE IF NOT EXISTS mensagem (
             id SERIAL PRIMARY KEY,
@@ -81,6 +85,18 @@ def criar_tabelas():
         )
     """)
 
+    # ⭐ FEEDBACK
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS feedback (
+            id SERIAL PRIMARY KEY,
+            conversa_id INTEGER REFERENCES conversa(id),
+            atendente_id INTEGER REFERENCES atendente(id),
+            nota INTEGER CHECK (nota BETWEEN 1 AND 5),
+            comentario TEXT,
+            criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
     conn.commit()
     cur.close()
     conn.close()
@@ -90,6 +106,7 @@ def criar_tabelas():
 # 🔹 Migrar tabela antiga
 # ==============================
 def migrar_mensagens_antigas():
+
     conn = get_db()
     cur = conn.cursor()
 
@@ -100,20 +117,17 @@ def migrar_mensagens_antigas():
                 WHERE table_name = 'mensagens'
             )
         """)
-        existe = cur.fetchone()[0]
 
-        if not existe:
+        if not cur.fetchone()[0]:
             return
 
-        print("Migrando tabela antiga mensagens...")
+        print("Migrando mensagens antigas...")
 
         cur.execute("SELECT telefone, mensagem, data FROM mensagens")
-
         registros = cur.fetchall()
 
         for telefone, texto, data in registros:
 
-            # cria usuario
             cur.execute("""
                 INSERT INTO usuario (telefone)
                 VALUES (%s)
@@ -123,7 +137,6 @@ def migrar_mensagens_antigas():
             cur.execute("SELECT id FROM usuario WHERE telefone=%s", (telefone,))
             usuario_id = cur.fetchone()[0]
 
-            # cria conversa
             cur.execute("""
                 INSERT INTO conversa (usuario_id)
                 VALUES (%s)
@@ -131,19 +144,12 @@ def migrar_mensagens_antigas():
             """, (usuario_id,))
             conversa_id = cur.fetchone()[0]
 
-            # salva mensagem
             cur.execute("""
-                INSERT INTO mensagem (
-                    conversa_id,
-                    remetente,
-                    conteudo,
-                    criada_em
-                )
+                INSERT INTO mensagem (conversa_id, remetente, conteudo, criada_em)
                 VALUES (%s,%s,%s,%s)
             """, (conversa_id, "usuario", texto, data))
 
         conn.commit()
-
         print("Migração concluída.")
 
     except Exception as e:
@@ -155,7 +161,7 @@ def migrar_mensagens_antigas():
 
 
 # ==============================
-# 🔹 Enviar WhatsApp
+# 🔹 Enviar mensagem WhatsApp
 # ==============================
 def enviar_mensagem_whatsapp(numero, texto):
 
@@ -177,23 +183,27 @@ def enviar_mensagem_whatsapp(numero, texto):
 
 
 # ==============================
-# 🔹 Webhook
+# 🔹 Webhook WhatsApp
 # ==============================
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
 
+    # Verificação META
     if request.method == "GET":
+
         if (
             request.args.get("hub.mode") == "subscribe"
             and request.args.get("hub.verify_token") == VERIFY_TOKEN
         ):
             return request.args.get("hub.challenge"), 200
+
         return "Token inválido", 403
 
+    # Recebimento mensagens
     if request.method == "POST":
 
         data = request.get_json()
-        print("Webhook recebido:", data)
+        print("Webhook:", data)
 
         try:
             value = data["entry"][0]["changes"][0]["value"]
@@ -214,7 +224,7 @@ def webhook():
             conn = get_db()
             cur = conn.cursor()
 
-            # usuário
+            # Criar usuário
             cur.execute("""
                 INSERT INTO usuario (telefone, nome)
                 VALUES (%s,%s)
@@ -225,7 +235,7 @@ def webhook():
             cur.execute("SELECT id FROM usuario WHERE telefone=%s", (telefone,))
             usuario_id = cur.fetchone()[0]
 
-            # conversa
+            # Buscar conversa aberta
             cur.execute("""
                 SELECT id FROM conversa
                 WHERE usuario_id=%s AND status='aberta'
@@ -242,14 +252,31 @@ def webhook():
                 """, (usuario_id,))
                 conversa_id = cur.fetchone()[0]
 
-            # evitar duplicidade
+            # Evitar duplicidade
             cur.execute("""
                 SELECT id FROM mensagem WHERE whatsapp_id=%s
             """, (whatsapp_id,))
             if cur.fetchone():
                 return jsonify({"status": "duplicada"}), 200
 
-            # salvar mensagem
+            # ⭐ Verifica se é feedback (1 a 5)
+            if texto in ["1","2","3","4","5"]:
+
+                cur.execute("""
+                    INSERT INTO feedback (conversa_id, nota)
+                    VALUES (%s,%s)
+                """, (conversa_id, int(texto)))
+
+                conn.commit()
+
+                enviar_mensagem_whatsapp(
+                    telefone,
+                    "Obrigado pelo feedback ❤️"
+                )
+
+                return jsonify({"status": "feedback"}), 200
+
+            # Salvar mensagem normal
             cur.execute("""
                 INSERT INTO mensagem (
                     conversa_id,
@@ -265,9 +292,10 @@ def webhook():
             cur.close()
             conn.close()
 
+            # Resposta automática
             enviar_mensagem_whatsapp(
                 telefone,
-                "👋 Olá! Eu sou o *Caeté*, assistente virtual.\n\nComo posso ajudar?"
+                "👋 Olá! Eu sou o *Caeté*, assistente virtual.\n\nDigite:\n1 - Atendimento\n2 - Informações\n3 - Falar com humano"
             )
 
         except Exception as e:
@@ -277,7 +305,47 @@ def webhook():
 
 
 # ==============================
-# 🔹 Start
+# 🔹 Encerrar conversa manual (TESTE)
+# ==============================
+@app.route("/encerrar/<telefone>")
+def encerrar_conversa(telefone):
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT c.id FROM conversa c
+        JOIN usuario u ON u.id=c.usuario_id
+        WHERE u.telefone=%s AND status='aberta'
+    """, (telefone,))
+
+    conversa = cur.fetchone()
+
+    if not conversa:
+        return "Nenhuma conversa aberta"
+
+    conversa_id = conversa[0]
+
+    cur.execute("""
+        UPDATE conversa
+        SET status='finalizada', finalizada_em=NOW()
+        WHERE id=%s
+    """, (conversa_id,))
+
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    enviar_mensagem_whatsapp(
+        telefone,
+        "Atendimento encerrado.\n\n⭐ Avalie de 1 a 5"
+    )
+
+    return "Conversa encerrada"
+
+
+# ==============================
+# 🔹 Start app
 # ==============================
 if __name__ == "__main__":
     criar_tabelas()
