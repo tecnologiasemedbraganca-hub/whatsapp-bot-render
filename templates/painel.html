@@ -1,1 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Caeté</title>
+    <link rel="stylesheet" href="/static/css/painel.css">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- LADO ESQUERDO – CONVERSAS -->
+    <aside class="sidebar">
+        <h2>💬 Conversas</h2>
+
+        <ul class="conversas">
+            <li class="conversa ativa">
+                <strong>Maria Silva</strong><br>
+                <span>Olá, preciso de ajuda</span>
+            </li>
+
+            <li class="conversa">
+                <strong>João Santos</strong><br>
+                <span>Bom dia</span>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- LADO DIREITO – CHAT -->
+    <main class="chat">
+
+        <header class="chat-header">
+            <div>
+                <strong>Maria Silva</strong><br>
+                <span>📞 5591999999999</span>
+            </div>
+
+            <div class="acoes">
+                <button class="assumir">Assumir</button>
+                <button class="encerrar">Encerrar</button>
+            </div>
+        </header>
+
+        <div class="mensagens">
+
+            <div class="mensagem usuario">
+                Olá, preciso de ajuda
+            </div>
+
+            <div class="mensagem bot">
+                Olá! Eu sou o Caeté 😊
+            </div>
+
+            <div class="mensagem atendente">
+                Bom dia! Em que posso ajudar?
+            </div>
+
+        </div>
+
+        <footer class="resposta">
+            <input type="text" placeholder="Digite sua mensagem...">
+            <button>Enviar</button>
+        </footer>
+
+    </main>
+
+</div>
+
+<script src="/static/js/painel.js"></script>
+</body>
+</html>
 
