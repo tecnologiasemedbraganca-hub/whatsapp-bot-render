@@ -13,23 +13,20 @@ VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN")
 ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN")
 PHONE_NUMBER_ID = os.environ.get("PHONE_NUMBER_ID")
 
-
 # ==============================
 # 🔹 Conexão banco
 # ==============================
 def get_db():
-    return psycopg2.connect(DATABASE_URL)
-
+    return psycopg2.connect(DATABASE_URL, sslmode="require")
 
 # ==============================
-# 🔹 Criar tabelas
+# 🔹 Criar tabelas + índices
 # ==============================
 def criar_tabelas():
 
     conn = get_db()
     cur = conn.cursor()
 
-    # USUARIO
     cur.execute("""
         CREATE TABLE IF NOT EXISTS usuario (
             id SERIAL PRIMARY KEY,
@@ -39,7 +36,6 @@ def criar_tabelas():
         )
     """)
 
-    # ATENDENTE
     cur.execute("""
         CREATE TABLE IF NOT EXISTS atendente (
             id SERIAL PRIMARY KEY,
@@ -49,7 +45,6 @@ def criar_tabelas():
         )
     """)
 
-    # CONVERSA
     cur.execute("""
         CREATE TABLE IF NOT EXISTS conversa (
             id SERIAL PRIMARY KEY,
@@ -61,7 +56,6 @@ def criar_tabelas():
         )
     """)
 
-    # MENSAGEM
     cur.execute("""
         CREATE TABLE IF NOT EXISTS mensagem (
             id SERIAL PRIMARY KEY,
@@ -74,7 +68,6 @@ def criar_tabelas():
         )
     """)
 
-    # ARQUIVO
     cur.execute("""
         CREATE TABLE IF NOT EXISTS arquivo (
             id SERIAL PRIMARY KEY,
@@ -85,7 +78,6 @@ def criar_tabelas():
         )
     """)
 
-    # ⭐ FEEDBACK
     cur.execute("""
         CREATE TABLE IF NOT EXISTS feedback (
             id SERIAL PRIMARY KEY,
@@ -97,15 +89,22 @@ def criar_tabelas():
         )
     """)
 
+    # Índices
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_usuario_tel ON usuario(telefone)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_msg_conv ON mensagem(conversa_id)")
+
     conn.commit()
     cur.close()
     conn.close()
 
-
 # ==============================
-# 🔹 Migrar tabela antiga
+# 🔹 Migração opcional
 # ==============================
 def migrar_mensagens_antigas():
+
+    if os.environ.get("MIGRAR_TABELA_ANTIGA") != "true":
+        print("Migração ignorada.")
+        return
 
     conn = get_db()
     cur = conn.cursor()
@@ -119,6 +118,7 @@ def migrar_mensagens_antigas():
         """)
 
         if not cur.fetchone()[0]:
+            print("Tabela antiga não existe.")
             return
 
         print("Migrando mensagens antigas...")
@@ -145,7 +145,9 @@ def migrar_mensagens_antigas():
             conversa_id = cur.fetchone()[0]
 
             cur.execute("""
-                INSERT INTO mensagem (conversa_id, remetente, conteudo, criada_em)
+                INSERT INTO mensagem (
+                    conversa_id, remetente, conteudo, criada_em
+                )
                 VALUES (%s,%s,%s,%s)
             """, (conversa_id, "usuario", texto, data))
 
@@ -153,12 +155,12 @@ def migrar_mensagens_antigas():
         print("Migração concluída.")
 
     except Exception as e:
+        conn.rollback()
         print("Erro migração:", e)
 
     finally:
         cur.close()
         conn.close()
-
 
 # ==============================
 # 🔹 Enviar mensagem WhatsApp
@@ -181,6 +183,12 @@ def enviar_mensagem_whatsapp(numero, texto):
     response = requests.post(url, headers=headers, json=payload)
     print("Resposta envio:", response.text)
 
+# ==============================
+# 🔹 Rota raiz
+# ==============================
+@app.route("/", methods=["GET"])
+def home():
+    return "Bot WhatsApp Caeté rodando 🚀"
 
 # ==============================
 # 🔹 Webhook WhatsApp
@@ -188,22 +196,21 @@ def enviar_mensagem_whatsapp(numero, texto):
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
 
-    # Verificação META
     if request.method == "GET":
-
         if (
             request.args.get("hub.mode") == "subscribe"
             and request.args.get("hub.verify_token") == VERIFY_TOKEN
         ):
             return request.args.get("hub.challenge"), 200
-
         return "Token inválido", 403
 
-    # Recebimento mensagens
     if request.method == "POST":
 
         data = request.get_json()
         print("Webhook:", data)
+
+        conn = None
+        cur = None
 
         try:
             value = data["entry"][0]["changes"][0]["value"]
@@ -240,7 +247,6 @@ def webhook():
                 SELECT id FROM conversa
                 WHERE usuario_id=%s AND status='aberta'
             """, (usuario_id,))
-
             conversa = cur.fetchone()
 
             if conversa:
@@ -259,7 +265,7 @@ def webhook():
             if cur.fetchone():
                 return jsonify({"status": "duplicada"}), 200
 
-            # ⭐ Verifica se é feedback (1 a 5)
+            # Feedback automático
             if texto in ["1","2","3","4","5"]:
 
                 cur.execute("""
@@ -269,43 +275,53 @@ def webhook():
 
                 conn.commit()
 
-                enviar_mensagem_whatsapp(
-                    telefone,
-                    "Obrigado pelo feedback ❤️"
-                )
+                enviar_mensagem_whatsapp(telefone, "Obrigado pelo feedback ❤️")
 
                 return jsonify({"status": "feedback"}), 200
 
-            # Salvar mensagem normal
+            # Salvar mensagem usuário
             cur.execute("""
                 INSERT INTO mensagem (
-                    conversa_id,
-                    whatsapp_id,
-                    remetente,
-                    conteudo,
-                    tipo
+                    conversa_id, whatsapp_id, remetente, conteudo, tipo
                 )
                 VALUES (%s,%s,%s,%s,%s)
             """, (conversa_id, whatsapp_id, "usuario", texto, tipo))
 
-            conn.commit()
-            cur.close()
-            conn.close()
-
-            # Resposta automática
-            enviar_mensagem_whatsapp(
-                telefone,
-                "👋 Olá! Eu sou o *Caeté*, assistente virtual.\n\nDigite:\n1 - Atendimento\n2 - Informações\n3 - Falar com humano"
+            resposta_bot = (
+                "👋 Olá! Eu sou o *Caeté*, assistente virtual.\n\n"
+                "Digite:\n"
+                "1 - Atendimento\n"
+                "2 - Informações\n"
+                "3 - Falar com humano"
             )
 
+            enviar_mensagem_whatsapp(telefone, resposta_bot)
+
+            # Salvar resposta bot
+            cur.execute("""
+                INSERT INTO mensagem (
+                    conversa_id, remetente, conteudo, tipo
+                )
+                VALUES (%s,%s,%s,%s)
+            """, (conversa_id, "bot", resposta_bot, "texto"))
+
+            conn.commit()
+
         except Exception as e:
+            if conn:
+                conn.rollback()
             print("Erro webhook:", e)
+
+        finally:
+            if cur:
+                cur.close()
+            if conn:
+                conn.close()
 
         return jsonify({"status": "ok"}), 200
 
-
 # ==============================
-# 🔹 Encerrar conversa manual (TESTE)
+# 🔹 Encerrar conversa manual
 # ==============================
 @app.route("/encerrar/<telefone>")
 def encerrar_conversa(telefone):
@@ -343,11 +359,12 @@ def encerrar_conversa(telefone):
 
     return "Conversa encerrada"
 
-
 # ==============================
 # 🔹 Start app
 # ==============================
 if __name__ == "__main__":
     criar_tabelas()
     migrar_mensagens_antigas()
-    app.run(host="0.0.0.0", port=10000)
+
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
