@@ -13,20 +13,23 @@ VERIFY_TOKEN = os.environ.get("VERIFY_TOKEN")
 ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN")
 PHONE_NUMBER_ID = os.environ.get("PHONE_NUMBER_ID")
 
+
 # ==============================
 # 🔹 Conexão banco
 # ==============================
 def get_db():
     return psycopg2.connect(DATABASE_URL, sslmode="require")
 
+
 # ==============================
-# 🔹 Criar tabelas + índices
+# 🔹 Criar tabelas + ajustes
 # ==============================
 def criar_tabelas():
 
     conn = get_db()
     cur = conn.cursor()
 
+    # USUARIO
     cur.execute("""
         CREATE TABLE IF NOT EXISTS usuario (
             id SERIAL PRIMARY KEY,
@@ -36,15 +39,24 @@ def criar_tabelas():
         )
     """)
 
+    # ATENDENTE (com telefone)
     cur.execute("""
         CREATE TABLE IF NOT EXISTS atendente (
             id SERIAL PRIMARY KEY,
             nome TEXT,
             email TEXT,
+            telefone TEXT UNIQUE,
             ativo BOOLEAN DEFAULT TRUE
         )
     """)
 
+    # 🔹 Caso tabela já exista sem telefone
+    cur.execute("""
+        ALTER TABLE atendente
+        ADD COLUMN IF NOT EXISTS telefone TEXT UNIQUE
+    """)
+
+    # CONVERSA
     cur.execute("""
         CREATE TABLE IF NOT EXISTS conversa (
             id SERIAL PRIMARY KEY,
@@ -56,6 +68,7 @@ def criar_tabelas():
         )
     """)
 
+    # MENSAGEM
     cur.execute("""
         CREATE TABLE IF NOT EXISTS mensagem (
             id SERIAL PRIMARY KEY,
@@ -68,6 +81,7 @@ def criar_tabelas():
         )
     """)
 
+    # ARQUIVO
     cur.execute("""
         CREATE TABLE IF NOT EXISTS arquivo (
             id SERIAL PRIMARY KEY,
@@ -78,6 +92,7 @@ def criar_tabelas():
         )
     """)
 
+    # FEEDBACK
     cur.execute("""
         CREATE TABLE IF NOT EXISTS feedback (
             id SERIAL PRIMARY KEY,
@@ -97,13 +112,13 @@ def criar_tabelas():
     cur.close()
     conn.close()
 
+
 # ==============================
 # 🔹 Migração opcional
 # ==============================
 def migrar_mensagens_antigas():
 
     if os.environ.get("MIGRAR_TABELA_ANTIGA") != "true":
-        print("Migração ignorada.")
         return
 
     conn = get_db()
@@ -118,10 +133,7 @@ def migrar_mensagens_antigas():
         """)
 
         if not cur.fetchone()[0]:
-            print("Tabela antiga não existe.")
             return
-
-        print("Migrando mensagens antigas...")
 
         cur.execute("SELECT telefone, mensagem, data FROM mensagens")
         registros = cur.fetchall()
@@ -152,7 +164,6 @@ def migrar_mensagens_antigas():
             """, (conversa_id, "usuario", texto, data))
 
         conn.commit()
-        print("Migração concluída.")
 
     except Exception as e:
         conn.rollback()
@@ -161,6 +172,7 @@ def migrar_mensagens_antigas():
     finally:
         cur.close()
         conn.close()
+
 
 # ==============================
 # 🔹 Enviar mensagem WhatsApp
@@ -183,12 +195,14 @@ def enviar_mensagem_whatsapp(numero, texto):
     response = requests.post(url, headers=headers, json=payload)
     print("Resposta envio:", response.text)
 
+
 # ==============================
 # 🔹 Rota raiz
 # ==============================
 @app.route("/", methods=["GET"])
 def home():
     return "Bot WhatsApp Caeté rodando 🚀"
+
 
 # ==============================
 # 🔹 Webhook WhatsApp
@@ -297,7 +311,7 @@ def webhook():
 
             enviar_mensagem_whatsapp(telefone, resposta_bot)
 
-            # Salvar resposta bot
+            # Salvar resposta do bot
             cur.execute("""
                 INSERT INTO mensagem (
                     conversa_id, remetente, conteudo, tipo
@@ -320,8 +334,9 @@ def webhook():
 
         return jsonify({"status": "ok"}), 200
 
+
 # ==============================
-# 🔹 Encerrar conversa manual
+# 🔹 Encerrar conversa
 # ==============================
 @app.route("/encerrar/<telefone>")
 def encerrar_conversa(telefone):
@@ -358,6 +373,7 @@ def encerrar_conversa(telefone):
     )
 
     return "Conversa encerrada"
+
 
 # ==============================
 # 🔹 Start app
