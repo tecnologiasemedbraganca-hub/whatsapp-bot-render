@@ -5,16 +5,20 @@ from config import PORT
 
 app = Flask(__name__)
 
+# registra as rotas (webhook)
 app.register_blueprint(routes)
 
+# rota raiz (health check do Render)
 @app.route("/")
 def home():
     return "Bot WhatsApp Caeté rodando 🚀"
 
 if __name__ == "__main__":
 
+    # cria/ajusta tabelas no startup
     criar_tabelas()
 
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    # inicia servidor na porta do Render
+    app.run(host="0.0.0.0", port=PORT)
+
 
