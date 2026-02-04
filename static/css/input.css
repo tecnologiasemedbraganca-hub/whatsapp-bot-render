@@ -25,3 +25,14 @@
     cursor: pointer;
 }
 
+.chat-input input:disabled {
+    background: #f0f2f5;
+    cursor: not-allowed;
+    color: #8696a0;
+}
+
+.chat-input.disabled {
+    opacity: 0.6;
+}
+
+
