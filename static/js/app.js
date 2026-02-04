@@ -25,3 +25,11 @@ function enviar() {
 
     console.log("Mensagem enviada:", texto);
 }
+function adicionarMensagem(html) {
+    const container = document.getElementById("chatMessages");
+    container.insertAdjacentHTML("beforeend", html);
+
+    agruparMensagens();
+    container.scrollTop = container.scrollHeight;
+}
+
