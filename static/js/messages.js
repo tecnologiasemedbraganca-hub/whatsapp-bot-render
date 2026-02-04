@@ -2,16 +2,22 @@
 // AGRUPAMENTO DE MENSAGENS
 // ===============================
 function agruparMensagens() {
-    const mensagens = document.querySelectorAll(".chat-messages .message");
+
+    const mensagens = document.querySelectorAll(
+        ".chat-messages .message:not(.typing)"
+    );
 
     let remetenteAnterior = null;
 
     mensagens.forEach((msg) => {
-        const remetenteAtual = msg.classList.contains("user")
-            ? "user"
-            : msg.classList.contains("agent")
-            ? "agent"
-            : "other";
+
+        let remetenteAtual = "other";
+
+        if (msg.classList.contains("user")) {
+            remetenteAtual = "user";
+        } else if (msg.classList.contains("agent")) {
+            remetenteAtual = "agent";
+        }
 
         if (remetenteAtual === remetenteAnterior) {
             msg.classList.add("grouped");
@@ -27,9 +33,10 @@ function agruparMensagens() {
 document.addEventListener("DOMContentLoaded", agruparMensagens);
 
 // ===============================
-// DIGITANDO...
+// DIGITANDO... (overlay)
 // ===============================
 function mostrarDigitando() {
+
     const status = document.getElementById("chatStatus");
     const typing = document.getElementById("typingIndicator");
 
@@ -44,19 +51,19 @@ function mostrarDigitando() {
 }
 
 function esconderDigitando() {
+
     const status = document.getElementById("chatStatus");
     const typing = document.getElementById("typingIndicator");
 
     if (status) {
-        status.textContent = "online";
         status.classList.remove("typing");
+        // ⚠️ quem define online/bot/humano é o state.js
     }
 
     if (typing) {
         typing.style.display = "none";
     }
 }
-
 
 // ===============================
 // EXPOSIÇÃO GLOBAL (OBRIGATÓRIA)
