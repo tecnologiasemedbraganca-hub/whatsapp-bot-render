@@ -5,48 +5,43 @@
     background: url("https://i.imgur.com/7Z5F2zN.png");
 }
 
-/* Wrapper */
+/* =========================
+   WRAPPER
+========================= */
 .message {
     display: flex;
     margin-bottom: 2px;
 }
 
-/* Direita (usuário / atendente) */
-.message.user {
-    justify-content: flex-end;
-}
-
-/* Esquerda (cliente) */
+/* Cliente (esquerda) */
 .message.other {
     justify-content: flex-start;
 }
 
-/* Bolha */
+/* Bot / Atendente (direita) */
+.message.user,
+.message.agent {
+    justify-content: flex-end;
+}
+
+/* =========================
+   BOLHA
+========================= */
 .bubble {
     max-width: 65%;
-    padding: 8px 10px;
+    padding: 7px 10px 18px 10px;
     border-radius: 7.5px;
     font-size: 14px;
     line-height: 1.4;
     position: relative;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.13);
-}
-
-/* Cores */
-.message.user .bubble {
-    background: #dcf8c6;
-    border-top-right-radius: 0;
-}
-
-.message.other .bubble {
-    background: #ffffff;
-    border-top-left-radius: 0;
+    box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
 }
 
 /* Texto */
 .bubble .text {
     display: block;
-    padding-right: 40px;
+    padding-right: 48px;
+    word-wrap: break-word;
 }
 
 /* Hora */
@@ -57,4 +52,67 @@
     bottom: 4px;
     right: 8px;
     white-space: nowrap;
+}
+
+/* =========================
+   CORES
+========================= */
+.message.other .bubble {
+    background: #ffffff;
+    border-top-left-radius: 0;
+}
+
+.message.user .bubble,
+.message.agent .bubble {
+    background: #dcf8c6;
+    border-top-right-radius: 0;
+}
+
+/* =========================
+   CAUDA DA MENSAGEM
+========================= */
+.message.other .bubble::before {
+    content: "";
+    position: absolute;
+    left: -8px;
+    top: 0;
+    width: 8px;
+    height: 13px;
+    background: #ffffff;
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+}
+
+.message.user .bubble::before,
+.message.agent .bubble::before {
+    content: "";
+    position: absolute;
+    right: -8px;
+    top: 0;
+    width: 8px;
+    height: 13px;
+    background: #dcf8c6;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+/* =========================
+   AGRUPAMENTO (MESMO REMETENTE)
+========================= */
+.message.grouped {
+    margin-top: 1px;
+}
+
+.message.grouped .bubble::before {
+    display: none;
+}
+
+.message.grouped .bubble {
+    border-top-left-radius: 7.5px;
+    border-top-right-radius: 7.5px;
+}
+
+/* =========================
+   AJUSTE FINO
+========================= */
+.message + .message:not(.grouped) {
+    margin-top: 6px;
 }
