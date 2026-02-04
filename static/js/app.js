@@ -13,93 +13,98 @@ document.addEventListener("DOMContentLoaded", () => {
     // BOTÕES DE CONTROLE
     // ==========================
     assumeBtn.addEventListener("click", () => {
-        console.log("Assumir clicado");
         ativarHumano();
     });
 
     endBtn.addEventListener("click", () => {
-        console.log("Encerrar clicado");
-
         ativarBot();
-
         adicionarMensagem(
             "bot",
             "🔒 Atendimento encerrado. O bot assumiu novamente."
         );
     });
-    
-    ///detectar scroll do atendente
+
+    // ==========================
+    // DETECÇÃO DE SCROLL
+    // ==========================
     messages.addEventListener("scroll", () => {
-    const margem = 40;
-    const noFim =
-        messages.scrollTop + messages.clientHeight >=
-        messages.scrollHeight - margem;
 
-    estadoLeitura.noFimDoChat = noFim;
+        const margem = 40;
+        const noFim =
+            messages.scrollTop + messages.clientHeight >=
+            messages.scrollHeight - margem;
 
-    if (noFim) {
-        marcarMensagensComoLidas();
-    }
+        estadoLeitura.noFimDoChat = noFim;
+
+        if (noFim) {
+            marcarMensagensComoLidas();
+        }
     });
 
     // ==========================
-    // FUNÇÃO ÚNICA DE MENSAGEM
+    // FUNÇÃO CENTRAL DE MENSAGEM
     // ==========================
     function adicionarMensagem(remetente, texto) {
 
         const msg = document.createElement("div");
         msg.classList.add("message");
 
+        let classeHora = "read";
+        let ticks = "✓✓";
+
         if (remetente === "usuario") {
             msg.classList.add("other");
 
             if (!estadoLeitura.noFimDoChat) {
-               msg.classList.add("unread");
-             }
-         }   
+                msg.classList.add("unread");
+                classeHora = "unread";
+                ticks = "✓";
+            }
+        }
 
         if (remetente === "bot") {
-            msg.classList.add("user");    // direita
+            msg.classList.add("user");
         }
 
         if (remetente === "atendente") {
-            msg.classList.add("agent");   // direita
+            msg.classList.add("agent");
         }
 
         msg.innerHTML = `
             <div class="bubble">
                 <span class="text">${texto}</span>
-                <span class="time">agora</span>
+                <span class="time ${classeHora}">agora ${ticks}</span>
             </div>
         `;
 
-        // 🔥 SEMPRE NO FINAL
         messages.appendChild(msg);
 
         agruparMensagens();
-        messages.scrollTop = messages.scrollHeight;
-    }
-    
-    ///marcar mensagens como lidas
-    
-    function marcarMensagensComoLidas() {
-    const naoLidas = document.querySelectorAll(
-        ".message.other.unread"
-    );
 
-    naoLidas.forEach(msg => {
-        msg.classList.remove("unread");
-
-        const time = msg.querySelector(".time");
-        if (time) {
-            time.classList.remove("unread");
-            time.classList.add("read");
-            time.textContent = time.textContent.replace("✓", "✓✓");
+        // ❗ só faz auto-scroll se estiver no fim
+        if (estadoLeitura.noFimDoChat) {
+            messages.scrollTop = messages.scrollHeight;
         }
-     });
+    }
 
-    // 🔮 FUTURO: avisar backend
-    // fetch("/api/marcar-lidas", ...)
+    // ==========================
+    // MARCAR COMO LIDAS
+    // ==========================
+    function marcarMensagensComoLidas() {
+
+        const naoLidas = document.querySelectorAll(".message.other.unread");
+
+        naoLidas.forEach(msg => {
+
+            msg.classList.remove("unread");
+
+            const time = msg.querySelector(".time");
+            if (time) {
+                time.classList.remove("unread");
+                time.classList.add("read");
+                time.textContent = time.textContent.replace("✓", "✓✓");
+            }
+        });
     }
 
     // ==========================
@@ -107,28 +112,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // ==========================
     function enviarMensagem() {
 
-        if (estadoChat.modo !== "humano") {
-            console.warn("Bot ativo — envio bloqueado");
-            return;
-        }
+        if (estadoChat.modo !== "humano") return;
 
         const texto = input.value.trim();
         if (!texto) return;
 
         adicionarMensagem("atendente", texto);
         input.value = "";
-
-        console.log("Mensagem do atendente:", texto);
-
-        // 🔮 futuro: enviar para backend
     }
 
     sendBtn.addEventListener("click", enviarMensagem);
 
     input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            enviarMensagem();
-        }
+        if (e.key === "Enter") enviarMensagem();
     });
 
     // ==========================
