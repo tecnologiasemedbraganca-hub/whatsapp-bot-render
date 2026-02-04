@@ -1,28 +1,35 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 from controllers.painel_controller import (
     listar_conversas,
     obter_conversa,
     responder_conversa
 )
 
-painel = Blueprint("painel", __name__)
+# Blueprint do painel
+painel_routes = Blueprint(
+    "painel_routes",
+    __name__,
+    url_prefix="/painel"
+)
 
-# Interface
-@painel.route("/painel")
+# =========================
+# Interface (NOVO PAINEL)
+# =========================
+@painel_routes.route("/")
 def painel_view():
-    from flask import render_template
-    return render_template("painel.html")
+    return render_template("whatsapp.html")
 
-# API
-@painel.route("/api/conversas")
+# =========================
+# API do painel
+# =========================
+@painel_routes.route("/api/conversas")
 def api_conversas():
     return listar_conversas()
 
-@painel.route("/api/conversa/<int:conversa_id>")
+@painel_routes.route("/api/conversa/<int:conversa_id>")
 def api_conversa(conversa_id):
     return obter_conversa(conversa_id)
 
-@painel.route("/api/responder", methods=["POST"])
+@painel_routes.route("/api/responder", methods=["POST"])
 def api_responder():
     return responder_conversa()
-
