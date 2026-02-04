@@ -1,1 +1,15 @@
+:root {
+    --bg-main: #e5ddd5;
+    --bg-sidebar: #ffffff;
+    --bg-header: #f0f2f5;
+    --bg-chat: #efeae2;
+
+    --msg-user: #ffffff;
+    --msg-bot: #dcf8c6;
+    --msg-agent: #e1f3fb;
+
+    --primary: #25d366;
+    --text-main: #111;
+    --text-muted: #667781;
+}
 
