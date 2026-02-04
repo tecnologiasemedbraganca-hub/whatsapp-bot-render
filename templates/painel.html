@@ -4,69 +4,89 @@
     <meta charset="UTF-8">
     <title>Painel Caeté</title>
     <link rel="stylesheet" href="/static/css/painel.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="container">
+<div class="app">
 
-    <!-- LADO ESQUERDO – CONVERSAS -->
+    <!-- SIDEBAR -->
     <aside class="sidebar">
-        <h2>💬 Conversas</h2>
+        <div class="logo">
+            🤖 <span>Caeté</span>
+        </div>
 
-        <ul class="conversas">
-            <li class="conversa ativa">
-                <strong>Maria Silva</strong><br>
-                <span>Olá, preciso de ajuda</span>
-            </li>
+        <div class="status">
+            <span class="dot online"></span> Online
+        </div>
 
-            <li class="conversa">
-                <strong>João Santos</strong><br>
-                <span>Bom dia</span>
-            </li>
-        </ul>
+        <div class="lista-conversas">
+            <div class="conversa ativa">
+                <div class="avatar">M</div>
+                <div class="info">
+                    <strong>Maria Silva</strong>
+                    <span>Olá, preciso de ajuda</span>
+                </div>
+                <div class="hora">10:21</div>
+            </div>
+
+            <div class="conversa">
+                <div class="avatar">J</div>
+                <div class="info">
+                    <strong>João Santos</strong>
+                    <span>Bom dia</span>
+                </div>
+                <div class="hora">09:58</div>
+            </div>
+        </div>
     </aside>
 
-    <!-- LADO DIREITO – CHAT -->
-    <main class="chat">
+    <!-- CHAT -->
+    <section class="chat">
 
         <header class="chat-header">
-            <div>
-                <strong>Maria Silva</strong><br>
-                <span>📞 5591999999999</span>
+            <div class="usuario">
+                <div class="avatar grande">M</div>
+                <div>
+                    <strong>Maria Silva</strong>
+                    <span>📞 5591999999999</span>
+                </div>
             </div>
 
             <div class="acoes">
-                <button class="assumir">Assumir</button>
-                <button class="encerrar">Encerrar</button>
+                <button class="btn assumir">Assumir</button>
+                <button class="btn encerrar">Encerrar</button>
             </div>
         </header>
 
         <div class="mensagens">
 
-            <div class="mensagem usuario">
+            <div class="msg usuario">
                 Olá, preciso de ajuda
+                <span class="hora">10:20</span>
             </div>
 
-            <div class="mensagem bot">
-                Olá! Eu sou o Caeté 😊
+            <div class="msg bot">
+                Olá! Eu sou o Caeté 🤖
+                <span class="hora">10:20</span>
             </div>
 
-            <div class="mensagem atendente">
+            <div class="msg atendente">
                 Bom dia! Em que posso ajudar?
+                <span class="hora">10:21</span>
             </div>
 
         </div>
 
         <footer class="resposta">
             <input type="text" placeholder="Digite sua mensagem...">
-            <button>Enviar</button>
+            <button class="btn enviar">Enviar</button>
         </footer>
 
-    </main>
+    </section>
 
 </div>
 
 <script src="/static/js/painel.js"></script>
 </body>
 </html>
-
