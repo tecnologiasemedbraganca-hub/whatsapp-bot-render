@@ -26,7 +26,7 @@
         <div class="sidebar-header">
             <div class="avatar">🤖</div>
             <div class="sidebar-actions">
-                <button class="icon-btn">⋮</button>
+                <button class="icon-btn" type="button">⋮</button>
             </div>
         </div>
 
@@ -81,10 +81,9 @@
             </div>
 
             <div class="chat-actions">
-                <!-- IDs são OBRIGATÓRIOS -->
-                <button class="btn assume" id="assumeBtn">Assumir</button>
-                <button class="btn end" id="endBtn">Encerrar</button>
-                <button class="icon-btn">⋮</button>
+                <button class="btn assume" id="assumeBtn" type="button">Assumir</button>
+                <button class="btn end" id="endBtn" type="button">Encerrar</button>
+                <button class="icon-btn" type="button">⋮</button>
             </div>
         </div>
 
@@ -126,8 +125,8 @@
 
         <!-- INPUT -->
         <div class="chat-input" id="chatInput">
-            <button class="icon-btn">😊</button>
-            <button class="icon-btn">📎</button>
+            <button class="icon-btn" type="button">😊</button>
+            <button class="icon-btn" type="button">📎</button>
 
             <input
                 type="text"
@@ -136,14 +135,14 @@
                 disabled
             >
 
-            <button class="send-btn" id="sendBtn">➤</button>
+            <button class="send-btn" id="sendBtn" type="button">➤</button>
         </div>
 
     </main>
 
 </div>
 
-<!-- ORDEM DOS SCRIPTS É CRÍTICA -->
+<!-- ORDEM DOS SCRIPTS (CRÍTICA) -->
 <script src="/static/js/state.js"></script>
 <script src="/static/js/messages.js"></script>
 <script src="/static/js/app.js"></script>
