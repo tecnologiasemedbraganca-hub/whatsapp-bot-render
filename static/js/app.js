@@ -1,8 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    console.log("app.js carregado");
+
     const input = document.getElementById("messageInput");
     const sendBtn = document.getElementById("sendBtn");
     const messages = document.getElementById("chatMessages");
+
+    const assumeBtn = document.getElementById("assumeBtn");
+    const endBtn = document.getElementById("endBtn");
+
+    // 🔥 VÍNCULO EXPLÍCITO DOS BOTÕES
+    assumeBtn.addEventListener("click", () => {
+        console.log("Assumir clicado");
+        ativarHumano();
+    });
+
+    endBtn.addEventListener("click", () => {
+        console.log("Encerrar clicado");
+        ativarBot();
+    });
+
+    // resto do código continua igual…
 
     // ==========================
     // ENVIO DE MENSAGEM (ATENDENTE)
