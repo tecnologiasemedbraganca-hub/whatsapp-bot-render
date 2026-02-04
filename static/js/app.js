@@ -9,43 +9,64 @@ document.addEventListener("DOMContentLoaded", () => {
     const assumeBtn = document.getElementById("assumeBtn");
     const endBtn = document.getElementById("endBtn");
 
-    // 🔥 VÍNCULO EXPLÍCITO DOS BOTÕES
+    // ==========================
+    // BOTÕES DE CONTROLE
+    // ==========================
     assumeBtn.addEventListener("click", () => {
         console.log("Assumir clicado");
         ativarHumano();
     });
 
     endBtn.addEventListener("click", () => {
-    console.log("Encerrar clicado");
+        console.log("Encerrar clicado");
 
-    // volta para bot
-    ativarBot();
+        ativarBot();
 
-    // mensagem visual no chat
-    const msg = document.createElement("div");
-    msg.classList.add("message", "user");
-
-    msg.innerHTML = `
-        <div class="bubble">
-            <span class="text">🔒 Atendimento encerrado. O bot assumiu novamente.</span>
-            <span class="time">agora</span>
-        </div>
-    `;
-
-    messages.appendChild(msg);
-    agruparMensagens();
-    messages.scrollTop = messages.scrollHeight;
+        adicionarMensagem(
+            "bot",
+            "🔒 Atendimento encerrado. O bot assumiu novamente."
+        );
     });
- 
-
-    // resto do código continua igual…
 
     // ==========================
-    // ENVIO DE MENSAGEM (ATENDENTE)
+    // FUNÇÃO ÚNICA DE MENSAGEM
+    // ==========================
+    function adicionarMensagem(remetente, texto) {
+
+        const msg = document.createElement("div");
+        msg.classList.add("message");
+
+        if (remetente === "usuario") {
+            msg.classList.add("other");   // esquerda
+        }
+
+        if (remetente === "bot") {
+            msg.classList.add("user");    // direita
+        }
+
+        if (remetente === "atendente") {
+            msg.classList.add("agent");   // direita
+        }
+
+        msg.innerHTML = `
+            <div class="bubble">
+                <span class="text">${texto}</span>
+                <span class="time">agora</span>
+            </div>
+        `;
+
+        // 🔥 SEMPRE NO FINAL
+        messages.appendChild(msg);
+
+        agruparMensagens();
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    // ==========================
+    // ENVIO ATENDENTE
     // ==========================
     function enviarMensagem() {
 
-        // 🔒 bloqueia envio se bot estiver ativo
         if (estadoChat.modo !== "humano") {
             console.warn("Bot ativo — envio bloqueado");
             return;
@@ -54,37 +75,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const texto = input.value.trim();
         if (!texto) return;
 
-        // cria estrutura correta
-        const msg = document.createElement("div");
-        msg.classList.add("message", "agent");
-
-        msg.innerHTML = `
-            <div class="bubble">
-                <span class="text">${texto}</span>
-                <span class="time">agora ✓✓</span>
-            </div>
-        `;
-
-        messages.appendChild(msg);
-
-        // agrupa corretamente
-        agruparMensagens();
-
-        // scroll automático
-        messages.scrollTop = messages.scrollHeight;
-
-        // limpa input
+        adicionarMensagem("atendente", texto);
         input.value = "";
 
         console.log("Mensagem do atendente:", texto);
 
-        // 🔮 FUTURO: enviar para backend / WhatsApp API
-        // fetch("/api/responder", { ... })
+        // 🔮 futuro: enviar para backend
     }
 
-    // ==========================
-    // EVENTOS
-    // ==========================
     sendBtn.addEventListener("click", enviarMensagem);
 
     input.addEventListener("keydown", (e) => {
@@ -94,30 +92,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================
-    // SIMULAÇÃO BOT (DEV)
+    // SIMULAÇÃO USUÁRIO (DEV)
     // ==========================
-    window.simularRespostaBot = function (texto) {
+    window.simularMensagemUsuario = function (texto) {
 
         mostrarDigitando();
 
         setTimeout(() => {
-
             esconderDigitando();
-
-            const msg = document.createElement("div");
-            msg.classList.add("message", "user");
-
-            msg.innerHTML = `
-                <div class="bubble">
-                    <span class="text">${texto}</span>
-                    <span class="time">agora ✓✓</span>
-                </div>
-            `;
-
-            messages.appendChild(msg);
-            agruparMensagens();
-            messages.scrollTop = messages.scrollHeight;
-
+            adicionarMensagem("usuario", texto);
         }, 1200);
     };
 
