@@ -27,6 +27,20 @@ document.addEventListener("DOMContentLoaded", () => {
             "🔒 Atendimento encerrado. O bot assumiu novamente."
         );
     });
+    
+    ///detectar scroll do atendente
+    messages.addEventListener("scroll", () => {
+    const margem = 40;
+    const noFim =
+        messages.scrollTop + messages.clientHeight >=
+        messages.scrollHeight - margem;
+
+    estadoLeitura.noFimDoChat = noFim;
+
+    if (noFim) {
+        marcarMensagensComoLidas();
+    }
+    });
 
     // ==========================
     // FUNÇÃO ÚNICA DE MENSAGEM
@@ -37,8 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
         msg.classList.add("message");
 
         if (remetente === "usuario") {
-            msg.classList.add("other");   // esquerda
-        }
+            msg.classList.add("other");
+
+            if (!estadoLeitura.noFimDoChat) {
+               msg.classList.add("unread");
+             }
+         }   
 
         if (remetente === "bot") {
             msg.classList.add("user");    // direita
@@ -60,6 +78,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         agruparMensagens();
         messages.scrollTop = messages.scrollHeight;
+    }
+    
+    ///marcar mensagens como lidas
+    
+    function marcarMensagensComoLidas() {
+    const naoLidas = document.querySelectorAll(
+        ".message.other.unread"
+    );
+
+    naoLidas.forEach(msg => {
+        msg.classList.remove("unread");
+
+        const time = msg.querySelector(".time");
+        if (time) {
+            time.classList.remove("unread");
+            time.classList.add("read");
+            time.textContent = time.textContent.replace("✓", "✓✓");
+        }
+     });
+
+    // 🔮 FUTURO: avisar backend
+    // fetch("/api/marcar-lidas", ...)
     }
 
     // ==========================
