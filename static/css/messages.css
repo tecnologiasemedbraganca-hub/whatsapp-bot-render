@@ -1,36 +1,60 @@
 .chat-messages {
     flex: 1;
-    padding: 20px;
+    padding: 20px 60px;
     overflow-y: auto;
     background: url("https://i.imgur.com/7Z5F2zN.png");
 }
 
+/* Wrapper */
 .message {
-    max-width: 65%;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-radius: 7px;
-    font-size: 14px;
-    position: relative;
+    display: flex;
+    margin-bottom: 2px;
 }
 
+/* Direita (usuário / atendente) */
 .message.user {
+    justify-content: flex-end;
+}
+
+/* Esquerda (cliente) */
+.message.other {
+    justify-content: flex-start;
+}
+
+/* Bolha */
+.bubble {
+    max-width: 65%;
+    padding: 8px 10px;
+    border-radius: 7.5px;
+    font-size: 14px;
+    line-height: 1.4;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.13);
+}
+
+/* Cores */
+.message.user .bubble {
+    background: #dcf8c6;
+    border-top-right-radius: 0;
+}
+
+.message.other .bubble {
     background: #ffffff;
+    border-top-left-radius: 0;
 }
 
-.message.bot {
-    background: var(--msg-bot);
+/* Texto */
+.bubble .text {
+    display: block;
+    padding-right: 40px;
 }
 
-.message.agent {
-    background: var(--msg-agent);
-    margin-left: auto;
-}
-
-.meta {
+/* Hora */
+.bubble .time {
     font-size: 11px;
-    text-align: right;
-    margin-top: 4px;
-    color: #555;
+    color: #667781;
+    position: absolute;
+    bottom: 4px;
+    right: 8px;
+    white-space: nowrap;
 }
-
