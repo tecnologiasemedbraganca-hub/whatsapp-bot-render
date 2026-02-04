@@ -28,3 +28,38 @@ document.addEventListener("DOMContentLoaded", () => {
 // Executa sempre que uma nova mensagem for adicionada
 window.agruparMensagens = agruparMensagens;
 
+function mostrarDigitando(remetente = "other") {
+    const status = document.getElementById("chatStatus");
+    const typing = document.getElementById("typingIndicator");
+
+    if (status) {
+        status.textContent = "digitando…";
+        status.classList.add("typing");
+    }
+
+    if (typing) {
+        typing.style.display = "flex";
+    }
+}
+
+function esconderDigitando() {
+    const status = document.getElementById("chatStatus");
+    const typing = document.getElementById("typingIndicator");
+
+    if (status) {
+        status.textContent = "online";
+        status.classList.remove("typing");
+    }
+
+    if (typing) {
+        typing.style.display = "none";
+    }
+}
+
+// Expor globalmente
+window.mostrarDigitando = mostrarDigitando;
+window.esconderDigitando = esconderDigitando;
+
+
+
+
