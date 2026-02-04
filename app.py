@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import render_template
 from routes.routes import routes
 from routes.painel_routes import painel
 from database.schema import criar_tabelas
@@ -22,5 +23,9 @@ if __name__ == "__main__":
 
     # inicia servidor na porta do Render
     app.run(host="0.0.0.0", port=PORT)
+
+@app.route("/painel")
+def painel():
+    return render_template("whatsapp.html")
 
 
