@@ -57,6 +57,7 @@ function esconderDigitando() {
     }
 }
 
+
 // ===============================
 // EXPOSIÇÃO GLOBAL (OBRIGATÓRIA)
 // ===============================
