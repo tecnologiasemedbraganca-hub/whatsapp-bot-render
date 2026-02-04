@@ -1,25 +1,69 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const botaoEnviar = document.querySelector(".resposta button");
+    const lista = document.querySelector(".conversas");
+    const mensagensDiv = document.querySelector(".mensagens");
     const input = document.querySelector(".resposta input");
-    const mensagens = document.querySelector(".mensagens");
+    const botao = document.querySelector(".resposta button");
 
-    botaoEnviar.addEventListener("click", () => {
+    // 🔹 Carregar conversas
+    fetch("/api/conversas")
+        .then(res => res.json())
+        .then(conversas => {
+
+            lista.innerHTML = "";
+
+            conversas.forEach(c => {
+                const li = document.createElement("li");
+                li.classList.add("conversa");
+                li.innerHTML = `
+                    <strong>${c.nome}</strong><br>
+                    <span>${c.ultima_mensagem}</span>
+                `;
+
+                li.onclick = () => carregarConversa(c.id);
+                lista.appendChild(li);
+            });
+        });
+
+    // 🔹 Carregar mensagens
+    function carregarConversa(id) {
+
+        fetch(`/api/conversa/${id}`)
+            .then(res => res.json())
+            .then(data => {
+
+                mensagensDiv.innerHTML = "";
+
+                data.mensagens.forEach(m => {
+                    const div = document.createElement("div");
+                    div.classList.add("mensagem", m.remetente);
+                    div.innerText = m.conteudo;
+                    mensagensDiv.appendChild(div);
+                });
+
+                mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
+            });
+    }
+
+    // 🔹 Enviar resposta manual
+    botao.onclick = () => {
 
         const texto = input.value.trim();
         if (!texto) return;
+
+        fetch("/api/responder", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({mensagem: texto})
+        });
 
         const div = document.createElement("div");
         div.classList.add("mensagem", "atendente");
         div.innerText = texto;
 
-        mensagens.appendChild(div);
+        mensagensDiv.appendChild(div);
         input.value = "";
-        mensagens.scrollTop = mensagens.scrollHeight;
-
-        // Aqui depois vamos integrar com o backend
-        console.log("Mensagem enviada:", texto);
-    });
+        mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
+    };
 
 });
-
