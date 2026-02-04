@@ -83,12 +83,65 @@
 
     </aside>
 
-    <!-- CHAT (vem depois) -->
-    <main class="chat-empty">
-        <div class="chat-placeholder">
-            <span>Selecione uma conversa para começar</span>
+    <!-- CHAT -->
+<main class="chat">
+
+    <!-- CHAT HEADER -->
+    <div class="chat-header">
+
+        <div class="chat-user">
+            <div class="avatar">M</div>
+            <div class="chat-user-info">
+                <span class="name">Maria Silva</span>
+                <span class="phone">5591999999999</span>
+            </div>
         </div>
-    </main>
+
+        <div class="chat-actions">
+            <button class="btn assume">Assumir</button>
+            <button class="btn end">Encerrar</button>
+            <button class="icon-btn">⋮</button>
+        </div>
+
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="chat-messages" id="chatMessages">
+
+        <div class="message user">
+            <span>Olá, preciso de ajuda</span>
+            <div class="meta">10:41</div>
+        </div>
+
+        <div class="message bot">
+            <span>👋 Olá! Eu sou o Caeté 🤖</span>
+            <div class="meta">10:41</div>
+        </div>
+
+        <div class="message agent">
+            <span>Bom dia! Em que posso ajudar?</span>
+            <div class="meta">10:42</div>
+        </div>
+
+    </div>
+
+    <!-- INPUT -->
+    <div class="chat-input">
+
+        <button class="icon-btn">😊</button>
+        <button class="icon-btn">📎</button>
+
+        <input
+            type="text"
+            id="messageInput"
+            placeholder="Digite uma mensagem"
+        >
+
+        <button class="send-btn" id="sendBtn">➤</button>
+
+    </div>
+
+</main>
 
 </div>
 
