@@ -1,3 +1,6 @@
+// ===============================
+// AGRUPAMENTO DE MENSAGENS
+// ===============================
 function agruparMensagens() {
     const mensagens = document.querySelectorAll(".chat-messages .message");
 
@@ -21,14 +24,12 @@ function agruparMensagens() {
 }
 
 // Executa ao carregar
-document.addEventListener("DOMContentLoaded", () => {
-    agruparMensagens();
-});
+document.addEventListener("DOMContentLoaded", agruparMensagens);
 
-// Executa sempre que uma nova mensagem for adicionada
-window.agruparMensagens = agruparMensagens;
-
-function mostrarDigitando(remetente = "other") {
+// ===============================
+// DIGITANDO...
+// ===============================
+function mostrarDigitando() {
     const status = document.getElementById("chatStatus");
     const typing = document.getElementById("typingIndicator");
 
@@ -56,10 +57,9 @@ function esconderDigitando() {
     }
 }
 
-// Expor globalmente
+// ===============================
+// EXPOSIÇÃO GLOBAL (OBRIGATÓRIA)
+// ===============================
+window.agruparMensagens = agruparMensagens;
 window.mostrarDigitando = mostrarDigitando;
 window.esconderDigitando = esconderDigitando;
-
-
-
-
