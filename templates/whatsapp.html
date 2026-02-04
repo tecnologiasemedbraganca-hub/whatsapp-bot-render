@@ -76,13 +76,14 @@
                 <div class="avatar">M</div>
                 <div class="chat-user-info">
                     <span class="name">Maria Silva</span>
-                    <span class="status" id="chatStatus">online</span>
+                    <span class="status" id="chatStatus">bot ativo</span>
                 </div>
             </div>
 
             <div class="chat-actions">
-                <button class="btn assume">Assumir</button>
-                <button class="btn end">Encerrar</button>
+                <!-- IDs são OBRIGATÓRIOS -->
+                <button class="btn assume" id="assumeBtn">Assumir</button>
+                <button class="btn end" id="endBtn">Encerrar</button>
                 <button class="icon-btn">⋮</button>
             </div>
         </div>
@@ -90,7 +91,7 @@
         <!-- MESSAGES -->
         <div class="chat-messages" id="chatMessages">
 
-            <!-- mensagem do usuário (cliente) -->
+            <!-- cliente -->
             <div class="message other">
                 <div class="bubble">
                     <span class="text">Olá, preciso de ajuda</span>
@@ -98,7 +99,7 @@
                 </div>
             </div>
 
-            <!-- mensagem do bot -->
+            <!-- bot -->
             <div class="message user">
                 <div class="bubble">
                     <span class="text">👋 Olá! Eu sou o Caeté 🤖</span>
@@ -106,29 +107,33 @@
                 </div>
             </div>
 
-            <!-- mensagem do atendente -->
+            <!-- atendente -->
             <div class="message agent">
                 <div class="bubble">
                     <span class="text">Bom dia! Em que posso ajudar?</span>
                     <span class="time">10:42 ✓✓</span>
                 </div>
             </div>
+
+            <!-- digitando -->
             <div class="message other typing" id="typingIndicator" style="display:none">
-                  <div class="bubble typing-bubble">
-                     <span></span><span></span><span></span>
-                  </div>
+                <div class="bubble typing-bubble">
+                    <span></span><span></span><span></span>
+                </div>
             </div>
+
         </div>
 
         <!-- INPUT -->
-        <div class="chat-input">
+        <div class="chat-input" id="chatInput">
             <button class="icon-btn">😊</button>
             <button class="icon-btn">📎</button>
 
             <input
                 type="text"
                 id="messageInput"
-                placeholder="Digite uma mensagem"
+                placeholder="Atendimento automático em andamento"
+                disabled
             >
 
             <button class="send-btn" id="sendBtn">➤</button>
@@ -137,7 +142,11 @@
     </main>
 
 </div>
+
+<!-- ORDEM DOS SCRIPTS É CRÍTICA -->
+<script src="/static/js/state.js"></script>
 <script src="/static/js/messages.js"></script>
 <script src="/static/js/app.js"></script>
+
 </body>
 </html>
