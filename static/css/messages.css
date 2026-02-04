@@ -147,21 +147,27 @@
 }
 
 /* =========================
-   DIGITANDO (OVERLAY REAL)
+   DIGITANDO (FIXO NO FINAL)
 ========================= */
+.chat-messages {
+    position: relative;
+}
+
 .typing-indicator {
-    position: sticky;
+    position: absolute;
     bottom: 10px;
+    left: 10px;
+
     display: flex;
     justify-content: flex-start;
-    padding-left: 10px;
-    z-index: 5;
+    pointer-events: none;
+    z-index: 10;
 }
 
 .typing-indicator .typing-bubble {
     background: #ffffff;
     border-radius: 7.5px;
-    padding: 12px 10px;
+    padding: 10px 12px;
     display: flex;
     gap: 6px;
     box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
