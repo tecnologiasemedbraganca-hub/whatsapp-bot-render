@@ -16,9 +16,27 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     endBtn.addEventListener("click", () => {
-        console.log("Encerrar clicado");
-        ativarBot();
+    console.log("Encerrar clicado");
+
+    // volta para bot
+    ativarBot();
+
+    // mensagem visual no chat
+    const msg = document.createElement("div");
+    msg.classList.add("message", "user");
+
+    msg.innerHTML = `
+        <div class="bubble">
+            <span class="text">🔒 Atendimento encerrado. O bot assumiu novamente.</span>
+            <span class="time">agora</span>
+        </div>
+    `;
+
+    messages.appendChild(msg);
+    agruparMensagens();
+    messages.scrollTop = messages.scrollHeight;
     });
+ 
 
     // resto do código continua igual…
 
