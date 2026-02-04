@@ -27,6 +27,9 @@ function ativarHumano() {
     status.textContent = "atendimento humano";
 }
 
+window.estadoLeitura = {
+    noFimDoChat: true
+};
 window.ativarBot = ativarBot;
 window.ativarHumano = ativarHumano;
 window.estadoChat = estadoChat;
