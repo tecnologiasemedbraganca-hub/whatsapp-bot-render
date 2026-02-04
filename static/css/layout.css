@@ -1,1 +1,10 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-main);
+}
+
+#app {
+    display: flex;
+    height: 100vh;
+}
 
