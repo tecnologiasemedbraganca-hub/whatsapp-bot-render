@@ -18,7 +18,78 @@
 </head>
 <body>
 <div id="app">
-    <!-- Conteúdo vem depois -->
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <!-- HEADER -->
+        <div class="sidebar-header">
+            <div class="avatar">
+                <span>🤖</span>
+            </div>
+
+            <div class="sidebar-actions">
+                <button class="icon-btn">⋮</button>
+            </div>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="sidebar-search">
+            <div class="search-box">
+                <input type="text" placeholder="Pesquisar ou iniciar conversa">
+            </div>
+        </div>
+
+        <!-- CONVERSAS -->
+        <div class="conversation-list">
+
+            <!-- CONVERSA ITEM -->
+            <div class="conversation active">
+                <div class="avatar">M</div>
+
+                <div class="conversation-info">
+                    <div class="conversation-top">
+                        <span class="name">Maria Silva</span>
+                        <span class="time">10:42</span>
+                    </div>
+
+                    <div class="conversation-bottom">
+                        <span class="last-message">
+                            🤖 Olá, preciso de ajuda
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OUTRA CONVERSA -->
+            <div class="conversation">
+                <div class="avatar">J</div>
+
+                <div class="conversation-info">
+                    <div class="conversation-top">
+                        <span class="name">João Santos</span>
+                        <span class="time">09:18</span>
+                    </div>
+
+                    <div class="conversation-bottom">
+                        <span class="last-message">
+                            👤 Em atendimento
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- CHAT (vem depois) -->
+    <main class="chat-empty">
+        <div class="chat-placeholder">
+            <span>Selecione uma conversa para começar</span>
+        </div>
+    </main>
+
 </div>
 
 <script src="/static/js/app.js"></script>
