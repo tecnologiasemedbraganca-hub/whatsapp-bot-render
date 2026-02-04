@@ -16,136 +16,124 @@
     <!-- Fonte -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
 <div id="app">
 
-    <!-- SIDEBAR -->
+    <!-- ================= SIDEBAR ================= -->
     <aside class="sidebar">
 
-        <!-- HEADER -->
         <div class="sidebar-header">
-            <div class="avatar">
-                <span>🤖</span>
-            </div>
-
+            <div class="avatar">🤖</div>
             <div class="sidebar-actions">
                 <button class="icon-btn">⋮</button>
             </div>
         </div>
 
-        <!-- SEARCH -->
         <div class="sidebar-search">
             <div class="search-box">
                 <input type="text" placeholder="Pesquisar ou iniciar conversa">
             </div>
         </div>
 
-        <!-- CONVERSAS -->
         <div class="conversation-list">
 
-            <!-- CONVERSA ITEM -->
             <div class="conversation active">
                 <div class="avatar">M</div>
-
                 <div class="conversation-info">
                     <div class="conversation-top">
                         <span class="name">Maria Silva</span>
                         <span class="time">10:42</span>
                     </div>
-
                     <div class="conversation-bottom">
-                        <span class="last-message">
-                            🤖 Olá, preciso de ajuda
-                        </span>
+                        <span class="last-message">🤖 Olá, preciso de ajuda</span>
                     </div>
                 </div>
             </div>
 
-            <!-- OUTRA CONVERSA -->
             <div class="conversation">
                 <div class="avatar">J</div>
-
                 <div class="conversation-info">
                     <div class="conversation-top">
                         <span class="name">João Santos</span>
                         <span class="time">09:18</span>
                     </div>
-
                     <div class="conversation-bottom">
-                        <span class="last-message">
-                            👤 Em atendimento
-                        </span>
+                        <span class="last-message">👤 Em atendimento</span>
                     </div>
                 </div>
             </div>
 
         </div>
-
     </aside>
 
-    <!-- CHAT -->
-<main class="chat">
+    <!-- ================= CHAT ================= -->
+    <main class="chat">
 
-    <!-- CHAT HEADER -->
-    <div class="chat-header">
+        <!-- HEADER -->
+        <div class="chat-header">
+            <div class="chat-user">
+                <div class="avatar">M</div>
+                <div class="chat-user-info">
+                    <span class="name">Maria Silva</span>
+                    <span class="phone">5591999999999</span>
+                </div>
+            </div>
 
-        <div class="chat-user">
-            <div class="avatar">M</div>
-            <div class="chat-user-info">
-                <span class="name">Maria Silva</span>
-                <span class="phone">5591999999999</span>
+            <div class="chat-actions">
+                <button class="btn assume">Assumir</button>
+                <button class="btn end">Encerrar</button>
+                <button class="icon-btn">⋮</button>
             </div>
         </div>
 
-        <div class="chat-actions">
-            <button class="btn assume">Assumir</button>
-            <button class="btn end">Encerrar</button>
-            <button class="icon-btn">⋮</button>
+        <!-- MESSAGES -->
+        <div class="chat-messages" id="chatMessages">
+
+            <!-- mensagem do usuário (cliente) -->
+            <div class="message other">
+                <div class="bubble">
+                    <span class="text">Olá, preciso de ajuda</span>
+                    <span class="time">10:41</span>
+                </div>
+            </div>
+
+            <!-- mensagem do bot -->
+            <div class="message user">
+                <div class="bubble">
+                    <span class="text">👋 Olá! Eu sou o Caeté 🤖</span>
+                    <span class="time">10:41 ✓✓</span>
+                </div>
+            </div>
+
+            <!-- mensagem do atendente -->
+            <div class="message agent">
+                <div class="bubble">
+                    <span class="text">Bom dia! Em que posso ajudar?</span>
+                    <span class="time">10:42 ✓✓</span>
+                </div>
+            </div>
+
         </div>
 
-    </div>
+        <!-- INPUT -->
+        <div class="chat-input">
+            <button class="icon-btn">😊</button>
+            <button class="icon-btn">📎</button>
 
-    <!-- MESSAGES -->
-    <div class="chat-messages" id="chatMessages">
+            <input
+                type="text"
+                id="messageInput"
+                placeholder="Digite uma mensagem"
+            >
 
-        <div class="message user">
-            <span>Olá, preciso de ajuda</span>
-            <div class="meta">10:41</div>
+            <button class="send-btn" id="sendBtn">➤</button>
         </div>
 
-        <div class="message bot">
-            <span>👋 Olá! Eu sou o Caeté 🤖</span>
-            <div class="meta">10:41</div>
-        </div>
-
-        <div class="message agent">
-            <span>Bom dia! Em que posso ajudar?</span>
-            <div class="meta">10:42</div>
-        </div>
-
-    </div>
-
-    <!-- INPUT -->
-    <div class="chat-input">
-
-        <button class="icon-btn">😊</button>
-        <button class="icon-btn">📎</button>
-
-        <input
-            type="text"
-            id="messageInput"
-            placeholder="Digite uma mensagem"
-        >
-
-        <button class="send-btn" id="sendBtn">➤</button>
-
-    </div>
-
-</main>
+    </main>
 
 </div>
 
 <script src="/static/js/app.js"></script>
 </body>
 </html>
-
