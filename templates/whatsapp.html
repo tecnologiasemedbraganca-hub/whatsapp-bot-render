@@ -26,7 +26,7 @@
         <div class="sidebar-header">
             <div class="avatar">🤖</div>
             <div class="sidebar-actions">
-                <button class="icon-btn" type="button">⋮</button>
+                <button class="icon-btn">⋮</button>
             </div>
         </div>
 
@@ -38,6 +38,7 @@
 
         <div class="conversation-list">
 
+            <!-- conversa ativa -->
             <div class="conversation active">
                 <div class="avatar">M</div>
                 <div class="conversation-info">
@@ -46,20 +47,9 @@
                         <span class="time">10:42</span>
                     </div>
                     <div class="conversation-bottom">
-                        <span class="last-message">🤖 Olá, preciso de ajuda</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="conversation">
-                <div class="avatar">J</div>
-                <div class="conversation-info">
-                    <div class="conversation-top">
-                        <span class="name">João Santos</span>
-                        <span class="time">09:18</span>
-                    </div>
-                    <div class="conversation-bottom">
-                        <span class="last-message">👤 Em atendimento</span>
+                        <span class="last-message">Olá, preciso de ajuda</span>
+                        <!-- badge opcional -->
+                        <span class="badge" style="display:none">1</span>
                     </div>
                 </div>
             </div>
@@ -81,51 +71,52 @@
             </div>
 
             <div class="chat-actions">
-                <button class="btn assume" id="assumeBtn" type="button">Assumir</button>
-                <button class="btn end" id="endBtn" type="button">Encerrar</button>
-                <button class="icon-btn" type="button">⋮</button>
+                <button class="btn assume" id="assumeBtn">Assumir</button>
+                <button class="btn end" id="endBtn">Encerrar</button>
+                <button class="icon-btn">⋮</button>
             </div>
         </div>
 
         <!-- MESSAGES -->
         <div class="chat-messages" id="chatMessages">
 
-            <!-- cliente -->
-            <div class="message other">
+            <!-- mensagem do usuário -->
+            <div class="message other unread">
                 <div class="bubble">
                     <span class="text">Olá, preciso de ajuda</span>
-                    <span class="time">10:41</span>
+                    <span class="time unread">10:41 ✓</span>
                 </div>
             </div>
 
-            <!-- bot -->
+            <!-- mensagem do bot -->
             <div class="message user">
                 <div class="bubble">
                     <span class="text">👋 Olá! Eu sou o Caeté 🤖</span>
-                    <span class="time">10:41 ✓✓</span>
+                    <span class="time read">10:41 ✓✓</span>
                 </div>
             </div>
 
-            <!-- atendente -->
+            <!-- mensagem do atendente -->
             <div class="message agent">
                 <div class="bubble">
                     <span class="text">Bom dia! Em que posso ajudar?</span>
-                    <span class="time">10:42 ✓✓</span>
+                    <span class="time read">10:42 ✓✓</span>
                 </div>
             </div>
- 
-             <!-- DIGITANDO (overlay, não mensagem) -->
+
+            <!-- DIGITANDO (overlay, fora do fluxo) -->
             <div class="typing-indicator" id="typingIndicator" style="display:none">
                 <div class="bubble typing-bubble">
                     <span></span><span></span><span></span>
                 </div>
             </div>
+
         </div>
 
         <!-- INPUT -->
         <div class="chat-input" id="chatInput">
-            <button class="icon-btn" type="button">😊</button>
-            <button class="icon-btn" type="button">📎</button>
+            <button class="icon-btn">😊</button>
+            <button class="icon-btn">📎</button>
 
             <input
                 type="text"
@@ -134,14 +125,14 @@
                 disabled
             >
 
-            <button class="send-btn" id="sendBtn" type="button">➤</button>
+            <button class="send-btn" id="sendBtn">➤</button>
         </div>
 
     </main>
 
 </div>
 
-<!-- ORDEM DOS SCRIPTS (CRÍTICA) -->
+<!-- ORDEM DOS SCRIPTS É CRÍTICA -->
 <script src="/static/js/state.js"></script>
 <script src="/static/js/messages.js"></script>
 <script src="/static/js/app.js"></script>
